@@ -164,7 +164,7 @@ public interface ApplePredicate{
 
 ```
 
-- declare multiple implementations of ApplePredicate to represent dif- ferent selection criteria
+- declare multiple implementations of ApplePredicate to represent different selection criteria:
 
 ```java
 
@@ -296,7 +296,7 @@ public interface Comparator<T> {
 
 ```
 
-- create different behaviors for the sort method by creating an ad hoc implementation of Comparator. For example,
+- create different behaviors for the sort method by creating an adhoc implementation of Comparator. For example,
   - using an anonymous class:
 
 ```java
