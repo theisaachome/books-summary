@@ -6,6 +6,10 @@
 - [Lambdas in a nutshell](#lambdas-in-a-nutshell)
 - [Where and how to use lambdas](#where-and-how-to-use-lambdas)
 - [Using Functional interfaces](#using-functional-interfaces)
+- [Type checking, type inference, and restrictions](#type-checking-type-inference-and-restrictions)
+  - [Type inference](#type-inference)
+  - [Using local variables](#using-local-variables)
+- [Method references](#method-references)
 
 ---
 
@@ -266,7 +270,7 @@ forEach(
 
 ---
 
-### **_Type checking, type inference, and restrictions_**
+### **_Type checking type inference and restrictions_**
 
 - a lambda expression itself doesn’t contain the information about which functional interface it’s implementing.
 
@@ -371,3 +375,111 @@ Comparator<Apple> c =
  int portNumber = 1337;
   Runnable r = () -> System.out.println(portNumber);
 ```
+
+---
+
+### Method references
+
+- let you reuse existing method definitions and pass them like lambdas.
+- more readable and feel more natural than using
+  lambda expressions.
+
+- sorting example with a method reference
+
+```java
+
+//Before:
+inventory.sort((Apple a1, Apple a2)
+a1.getWeight().compareTo(a2.getWeight()));
+
+// After
+inventory.sort(comparing(Apple::getWeight));
+
+```
+
+#### In a nutshell
+
+- shorthand for lambdas calling only a specific method.
+- refer to the method by name rather than by a description of how to call it.
+
+#### How does it work ?
+
+- the target reference is placed before the delimiter :: and
+
+- the name of the method is provided after it.
+- **_For example:_**
+
+  ```java
+  Apple::getWeight
+  ```
+
+- reference to the method getWeight
+- no brackets are needed after getWeight
+- because you’re not calling it at the moment, you’re merely quoting its name
+
+#### method reference is shorthand for the lambda expression
+
+![](chapter-03/methods-reference.png)
+
+### three main kinds of method references:
+
+- A static method
+
+```java
+Integer::parseInt
+```
+
+- An instance method of an arbitrary type
+
+```java
+String::length
+```
+
+- An instance method of an existing object or expression
+
+```java
+expensiveTransaction::getValue
+```
+
+---
+
+### second method
+
+- For example,
+
+```java
+  // the lambda expression
+ (String s) -> s.toUpper- Case()
+ // can be rewritten as
+  String::toUpperCase.
+```
+
+### third method
+
+- when you’re calling a method in a lambda to an external object that already exists.
+- For example:
+
+```java
+// the lambda expression
+() -> expensiveTransaction.getValue()
+// can be rewritten as
+expensiveTransaction::getValue
+```
+
+- when you need to pass around a method defined as a private helper.
+- For example : say you defined a helper method isValidName:
+
+```java
+  private boolean isValidName(String string) {
+    return Character.isUpperCase(string.charAt(0));
+  }
+  //You can now pass this method around in the context of a Predicate<String> using a method reference:
+
+  filter(words, this::isValidName)
+```
+
+### method references
+
+- to digest method references:
+
+  ![](chapter-03/methods-reference-02.png)
