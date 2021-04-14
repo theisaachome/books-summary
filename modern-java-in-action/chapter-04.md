@@ -6,6 +6,8 @@
 - [Getting started with streams](#getting-started-with-streams)
 - [Streams vs collections](#streams-vs-collections)
 
+- [Stream operations](#stream-operations)
+
 ---
 
 ### Introducing Streams
@@ -300,3 +302,99 @@ _example_
 - applied to DVD versus internet streaming example :
 
 ![](chapter-04/stream-vs-collection.png)
+
+---
+
+### Traversable only once
+
+- A stream can be traversed only once. After that a stream is said to be consumed.
+
+### External vs. internal iteration
+
+- Collection interface requires iteration to be done by the user.
+- this is called external iteration.
+
+**_Collection Example_**
+
+- foreach()
+
+  ![](chapter-04/for-each.png)
+
+- iterator()
+
+  ![](chapter-04/iterator.png)
+
+- The Streams library, by contrast, uses internal iteration—it does the iteration for you
+
+- and takes care of storing the resulting stream value somewhere;
+
+**_Stream Collection_**
+
+- stream()
+
+  ![](chapter-04/stream-iteration.png)
+
+### Internal versus external iteration
+
+![](chapter-04/internal-vs-extranal.png)
+
+---
+
+### Stream operations
+
+- Stream defines many operations. They can be classified into two categories.
+
+![](chapter-04/stream-operation-2.png)
+
+- You can see two groups of operations:
+
+  - filter, map, and limit can be connected together to form a pipeline.
+
+  - collect causes the pipeline to be executed and closes it.
+
+- Stream operations that can be connected are called **_intermediate operations_**.
+
+- Operations that close a stream are called **_terminal operations_**.
+
+![](chapter-04/terminal-operation.png)
+
+---
+
+### Intermediate operations
+
+- Intermediate operations such as filter or sorted return another stream as the return type.
+
+- This allows the operations to be connected to form a query.
+
+- intermediate operations don’t perform any processing until a terminal operation is invoked on the stream pipeline.
+
+- they’re lazy.
+
+- This is because intermediate operations can usually be merged and processed into a single pass by the terminal operation.
+
+  ![](chapter-04/intermediate-operation.png)
+
+### Terminal operations
+
+- Terminal operations produce a result from a stream pipeline.
+
+- A result is any non-stream value such as a List, an Integer, or even void.
+
+- For example, in the following pipeline,
+
+  - forEach is a terminal operation that returns void
+  - and applies a lambda to each dish in the source.
+
+- Passing System.out.println to forEach asks it to print every Dish in the stream created from menu:
+
+  ```java
+    menu.stream().forEach(System.out::println);
+  ```
+
+#### Intermediate operations
+
+![](chapter-04/in-operations-list.png)
+
+#### Terminal operations
+
+![](chapter-04/ter-operation-list.png)
