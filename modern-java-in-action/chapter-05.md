@@ -337,3 +337,184 @@ Optional<Integer> firstSquareDivisibleByThree =
     - this is referred to as a fold because you can view
 
   - this operation as repeatedly folding a long piece of paper until it forms a small square, which is the result of the fold operation.
+
+#### Summing the elements
+
+- You reduce the list of numbers into one number by repeatedly using addition.
+
+```java
+  int sum = 0;
+    for (int x : numbers) {
+    sum += x;
+   }
+```
+
+- There are two parameters in this code:
+  - The initial value of the sum variable, in this case 0
+  - The operation to combine all the elements of the list, in this case +.
+
+### reduce Method
+
+```java
+int sum = numbers.stream().reduce(0, (a, b) -> a + b);
+```
+
+- reduce takes two arguments:
+
+  - An initial value, here 0.
+  - A BinaryOperator<T> to combine two elements and produce a new value;
+  - here the lambda(a,b)->a+b.
+
+- You could just as easily multiply all the elements by passing a different lambda, (a, b)
+  -> a \* b, to the reduce operation:
+
+```java
+  int product = numbers.stream().reduce(1, (a, b) -> a * b);
+```
+
+![](chapter-05/reduce.png)
+
+### Maximum and minimum
+
+- To calculate the minimum, you need to pass Integer.min
+
+  ```java
+  Optional<Integer> max = numbers.stream().reduce(Integer::max);
+  ```
+
+- To the reduce operation instead of Integer.max:
+  ```java
+  Optional<Integer> min = numbers.stream().reduce(Integer::min);
+  ```
+- You could have equally well used the lambda
+
+  - (x, y) -> x < y ? x : y
+
+  - instead of Integer::min, but the latter is definitely easier to read!
+
+![](chapter-05/min-max.png)
+
+---
+
+### Putting it all into practice
+
+- Find all transactions in the year 2011 and sort them by value (small to high).
+- What are all the unique cities where the traders work?
+- Find all traders from Cambridge and sort them by name.
+- Return a string of all traders’ names sorted alphabetically.
+- Are any traders based in Milan?
+- Print the values of all transactions from the traders living in Cambridge.
+- What’s the highest value of all the transactions?
+- Find the transaction with the smallest value.
+
+### Solutions
+
+### 1
+
+![](chapter-05/solution-01.png)
+
+---
+
+### 2
+
+![](chapter-05/solution-02.png)
+
+- drop distinct() and use toSet() instead
+
+```java
+   Set<String> cities =
+  transactions.stream()
+  .map(transaction -> transaction.getTrader().getCity())
+  .collect(toSet());
+```
+
+---
+
+### 3
+
+![](chapter-05/solution-03.png)
+
+---
+
+### 4
+
+![](chapter-05/solution-04.png)
+
+- Note that this solution is inefficient.
+
+- (all Strings are repeatedly concatenated, which creates a new String object at each iteration).
+
+- In the next chapter, you’ll see a more efficient solution that uses joining() as follows (which internally makes use of a StringBuilder):
+
+```java
+String traderStr =
+    transactions.stream()
+Listing 5.5
+   .map(transaction -> transaction.getTrader().getName())
+   .distinct()
+   .sorted()
+   .collect(joining());
+```
+
+---
+
+### 5
+
+![](chapter-05/solution-05.png)
+
+---
+
+### 6
+
+![](chapter-05/solution-06.png)
+
+---
+
+### 7
+
+![](chapter-05/solution-07.png)
+
+---
+
+### 8
+
+![](chapter-05/solution-08.png)
+
+- You can do better. A stream supports the methods min and max that take a Comparator as argument to specify which key to compare with when calculating the minimum or maximum:
+
+```java
+
+Optional<Transaction> smallestTransaction =
+  transactions.stream()
+              .min(comparing(Transaction::getValue
+
+```
+
+---
+
+### Numeric streams
+
+- calculate the number of calories in the menu.
+
+```java
+ int calories = menu.stream()
+               .map(Dish::getCalories)
+               .sum();
+```
+
+- this isn’t possible.
+
+### Primitive stream specializations
+
+- three primitive specialized stream interfaces to tackle this issue,
+  - IntStream,
+  - DoubleStream, and
+  - LongStream,
+
+### MAPPING TO A NUMERIC STREAM
+
+- convert a stream to a specialized version are mapToInt, mapToDouble, and mapToLong.
+
+```java
+
+```
