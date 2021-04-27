@@ -21,6 +21,14 @@
   - [findAny](#findAny)
   - [Finding the first element](#finding-the-first-element)
 - [Reducing](#reducing)
+  - [Summing the elements](#summing-the-elements)
+  - [Maximum and minimum](#maximum-and-minimum)
+- [Putting it all into practice](#putting-it-all-into-practice)
+- [Numeric streams](#numeric-streams)
+  - [Primitive stream specializations](#primitive-stream-specializations)
+  - [MAPPING TO A NUMERIC STREAM](#MAPPING-TO-A-NUMERIC-STREAM)
+  - [Default Value: OptionalInt](#default-value:-OptionalInt)
+  - [Numeric ranges](#numeric-ranges)
 
 ---
 
@@ -516,5 +524,54 @@ Optional<Transaction> smallestTransaction =
 - convert a stream to a specialized version are mapToInt, mapToDouble, and mapToLong.
 
 ```java
-
+   int calories = menu.stream()
+        .mapToInt(Dish::getCalories)
+        .sum();
 ```
+
+### Converting back to a stream of object
+
+![](chapter-05/int-to-object-stream.png)
+
+### Default Value: OptionalInt
+
+- There’s a primitive specialized version of Optional
+
+- as well for the three primitive stream specializations:
+
+  - OptionalInt,
+
+  - OptionalDouble, and
+
+  - OptionalLong.
+
+- For example, you can find the maximal element of an IntStream by calling the max method, which returns an OptionalInt:
+
+  ```java
+  OptionalInt maxCalories =
+                  menu.stream()
+                  .mapToInt(Dish::getCalories)
+                  .max();
+  //Provides an explicit default maximum if there’s no value
+   int max = maxCalories.orElse(1);
+  ```
+
+---
+
+### Numeric ranges
+
+- to generate all numbers between 1 and 100.
+
+- two static methods available on
+
+  - IntStream and
+
+  - LongStream to help generate such ranges:
+
+  - range and rangeClosed.
+
+- Both methods take the starting and the end value of the range parameter.
+
+- But range is exclusive, whereas rangeClosed is inclusive.
+
+![](chapter-05/range-method.png)
