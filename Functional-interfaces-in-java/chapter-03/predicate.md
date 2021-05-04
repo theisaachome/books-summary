@@ -4,6 +4,15 @@
 
 - [The Predicate Interface](#The-Predicate-Interface)
 - [Passing a Predicate to a Method](#Passing-a-Predicate-to-a-Method)
+- [Chains of Functional Interfaces](#Chains-of-Functional-Interfaces)
+  - [The OR Operation](#The-OR-Operation)
+  - [The AND Operation](#The-AND-Operation)
+  - [The Negate Operation](#The-Negate-Operation)
+  - [Predicate.isEqual](#Predicate-isEqual)
+  - [Using Predicate.not](#Using-Predicate.not)
+- [Overriding Predicate Default Methods](#Overriding-Predicate-Default-Methods)
+- [Specializations of Predicates](#Specializations-of-Predicates)
+- [Binary Predicates](#Binary-Predicates)
 
 ---
 
@@ -26,7 +35,7 @@ Predicate<Integer> p1 = x -> x >7;
 }
 ```
 
----
+### **[⬆ back to top](#table-of-contents)**
 
 ### Passing a Predicate to a Method
 
@@ -177,6 +186,168 @@ var secondResult = p.negate()
 
 ---
 
-### Predicate.isEqual
+### Predicate isEqual
 
 - the equals method of the Predicate object’s type parameter to check if the argument to the test method is equal to a value.
+
+```java
+static <T> Predicate<T> isEqual(Object targetRef);
+```
+
+#### example
+
+```java
+Predicate<Integer> p2= Predicate.isEqual(3);
+		if(p2.test(3)) {
+			System.out.println("Predicate is Equal");
+}
+```
+
+- a composed predicate the logical OR
+
+```java
+Predicate<Integer> p1= x->x>7;
+var result = p1.or(Predicate.isEqual(3)).test(3);
+System.out.println(result);
+```
+
+---
+
+### Using Predicate.not
+
+```java
+static <T> Predicate<T> not(Predicate<T> target); [JAVA 11]s
+```
+
+- Predicate.not method
+
+  - Reverses the result of the calculation performed by its predicate argument.
+
+- While the negate method changes the result of an existing predicate,
+
+- the not method changes the result of a predicate argument.
+
+#### example
+
+```java
+Predicate<Integer> p1 = x->x >7;
+var result = p1.and(Predicate.not(x->x%2==1)).test(8);
+System.out.println(result);
+```
+
+---
+
+### Overriding Predicate Default Methods
+
+- Normal Use case
+
+#### example
+
+- check if a string starts with the character “a” and
+- is greater than four characters in length.
+
+```java
+Predicate<String> lengthGr4 = x->x.length()> 4;
+Predicate<String> char0isA= x -> x.charAt(0) == 'a';
+var result = lengthGr4.and(char0isA).test("alpha");
+System.out.println(result);
+```
+
+- will print error if String is null
+
+```java
+ var resultError = lengthGr4.and(char0isA)
+                                .test(null);
+  System.out.println(resultError);
+```
+
+#### To Null Check overrides the methods
+
+```java
+Predicate<String> nullProtectedLengthGr4 = new Predicate<String>() {
+	@Override
+	public boolean test(String x) {
+		return x.length() > 4;
+	}
+	@Override
+	public Predicate<String> and(Predicate<? super String> p){
+		return x->x == null? false:test(x) && p.test(x);
+	}
+};
+
+System.out.println(nullProtectedLengthGr4.and(char0isA).test("alpha"));
+System.out.println(nullProtectedLengthGr4.and(char0isA).test(null));
+```
+
+---
+
+### Specializations of Predicates
+
+- Java API provides
+- the non-generic
+  - IntPredicate,
+  - LongPredicate, and
+  - DoublePredicate interfaces
+  - which can be used to test Integers, Longs, and Doubles, respectively.
+
+```java
+
+@FunctionalInterface
+public interface IntPredicate{
+    boolean test(int value);
+}
+
+@FunctionalInterface
+public interface LongPredicate{
+    boolean test(long value);
+}
+
+@FunctionalInterface
+public interface DoublePredicate{
+    boolean test(double value);
+}
+
+```
+
+#### examples
+
+```java
+IntPredicate i = x -> x > 5;
+LongPredicate l = y -> y%2 == 0;
+DoublePredicate d = z -> z > 8.0;
+System.out.println(i.test(2));
+System.out.println(l.or(a -> a == 6L).test(10L));
+System.out.println(d.and(b -> b < 9.0).test(8.5));
+```
+
+---
+
+### Binary Predicates
+
+- To create a single predicate of two different types.
+
+- The BiPredicate interface specifies two type parameters.
+
+```java
+@FunctionalInterface
+public interface BiPredicate<T, U>{
+    boolean test(T t, U u);
+}
+```
+
+#### example
+
+- With type parameters String and Integer
+
+  - Tests if a string equals “Manager” and
+
+  - An integer is greater than 100000.
+
+```java
+BiPredicate<String, Integer> bi =
+		(x,y)->x.equals("Manager") && y > 1000;
+String position = "Manager";
+int salary = 1500;
+var result = bi.test(position, salary);
+System.out.println(result);
+```
